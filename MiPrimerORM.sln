@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiPrimerORM1", "MiPrimerORM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api", "api\api.csproj", "{8F4BF656-6F70-4A82-8572-3E2FB32069CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vista", "vista\vista.csproj", "{9A58A6F6-A140-4992-AAB7-DB37647CBAE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8F4BF656-6F70-4A82-8572-3E2FB32069CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F4BF656-6F70-4A82-8572-3E2FB32069CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F4BF656-6F70-4A82-8572-3E2FB32069CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A58A6F6-A140-4992-AAB7-DB37647CBAE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A58A6F6-A140-4992-AAB7-DB37647CBAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A58A6F6-A140-4992-AAB7-DB37647CBAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A58A6F6-A140-4992-AAB7-DB37647CBAE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,23 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Add Swagger/OpenAPI
 builder.Services.AddSwaggerGen();
+
+// Register your controllers as services
+builder.Services.AddScoped<MiPrimerORM1.Controllers.UserController>();
+builder.Services.AddScoped<MiPrimerORM1.Controllers.OrderController>();
+builder.Services.AddScoped<MiPrimerORM1.Controllers.ProductController>();
+
+// Configure the database context using the connection string from appsettings.json
+builder.Services.AddDbContext<MiPrimerORM1.Models.EmpresadbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 25))));
 
 var app = builder.Build();
 
@@ -13,41 +27,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-var summaries = new[]
+app.MapGet("/listaUsuarios", async (HttpContext httpContext) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-//app.Run();
-
-app.MapGet("/listaUsuarios", () =>
-{
-    // Llamar controlador de usuarios
-    MiPrimerORM1.Controllers.UserController userController = new MiPrimerORM1.Controllers.UserController(new MiPrimerORM1.Models.EmpresadbContext());
-    return userController.GetAllUsersAsync();
+    // Use the controller from the dependency injection container
+    var userController = httpContext.RequestServices.GetRequiredService<MiPrimerORM1.Controllers.UserController>();
+    var users = await userController.GetAllUsersAsync();
+    return users;
 })
 .WithName("listaUsuarios")
 .WithOpenApi();
 
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
