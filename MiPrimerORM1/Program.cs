@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using MiPrimerORM1.Models;
 using Microsoft.EntityFrameworkCore;
-using MiPrimerORM1.Clases;
 using MiPrimerORM1.Controllers;
 
 class Program
@@ -15,6 +13,10 @@ class Program
 
         using (var context = new EmpresadbContext(optionsBuilder.Options))
         {
+            var userController = new UserController(context);
+            var orderController = new OrderController(context);
+            var productController = new ProductController(context);
+
             bool continuar = true;
 
             while (continuar)
@@ -25,25 +27,41 @@ class Program
                 Console.WriteLine("2. Agregar un nuevo usuario");
                 Console.WriteLine("3. Actualizar un usuario");
                 Console.WriteLine("4. Eliminar un usuario");
-                Console.WriteLine("5. Salir");
+                Console.WriteLine("5. Listar todos los pedidos");
+                Console.WriteLine("6. Agregar un nuevo pedido");
+                Console.WriteLine("7. Listar todos los productos");
+                Console.WriteLine("8. Agregar un nuevo producto");
+                Console.WriteLine("9. Salir");
                 Console.Write("Seleccione una opción: ");
                 string opcion = Console.ReadLine();
 
                 switch (opcion)
                 {
                     case "1":
-                        ListarUsuarios(context);
+                        userController.ListarUsuarios();
                         break;
                     case "2":
-                        AgregarUsuario(context);
+                        userController.AgregarUsuario();
                         break;
                     case "3":
-                        ActualizarUsuario(context);
+                        userController.ActualizarUsuario();
                         break;
                     case "4":
-                        EliminarUsuario(context);
+                        userController.EliminarUsuario();
                         break;
                     case "5":
+                        orderController.ListarPedidos();
+                        break;
+                    case "6":
+                        orderController.AgregarPedido();
+                        break;
+                    case "7":
+                        productController.ListarProductos();
+                        break;
+                    case "8":
+                        productController.AgregarProducto();
+                        break;
+                    case "9":
                         continuar = false;
                         break;
                     default:
@@ -59,18 +77,28 @@ class Program
             }
         }
     }
+}
 
-    static void ListarUsuarios(EmpresadbContext context)
+public class UserController
+{
+    private readonly EmpresadbContext _context;
+
+    public UserController(EmpresadbContext context)
+    {
+        _context = context;
+    }
+
+    public void ListarUsuarios()
     {
         Console.Clear();
         Console.WriteLine("=== LISTA DE USUARIOS ===");
-        foreach (var usuario in context.Usuarios.ToList())
+        foreach (var usuario in _context.Usuarios.ToList())
         {
             Console.WriteLine($"{usuario.Id} - {usuario.Nombre} - {usuario.Email} - {usuario.Rol}");
         }
     }
 
-    static void AgregarUsuario(EmpresadbContext context)
+    public void AgregarUsuario()
     {
         Console.Clear();
         Console.WriteLine("=== AGREGAR NUEVO USUARIO ===");
@@ -103,8 +131,8 @@ class Program
 
         try
         {
-            context.Usuarios.Add(nuevoUsuario);
-            context.SaveChanges();
+            _context.Usuarios.Add(nuevoUsuario);
+            _context.SaveChanges();
             Console.WriteLine("Usuario agregado correctamente.");
         }
         catch (Exception ex)
@@ -113,7 +141,7 @@ class Program
         }
     }
 
-    static void ActualizarUsuario(EmpresadbContext context)
+    public void ActualizarUsuario()
     {
         Console.Clear();
         Console.WriteLine("=== ACTUALIZAR USUARIO ===");
@@ -125,7 +153,7 @@ class Program
             return;
         }
 
-        var usuario = context.Usuarios.Find(id);
+        var usuario = _context.Usuarios.Find(id);
         if (usuario == null)
         {
             Console.WriteLine("Usuario no encontrado.");
@@ -149,8 +177,8 @@ class Program
 
         try
         {
-            context.Usuarios.Update(usuario);
-            context.SaveChanges();
+            _context.Usuarios.Update(usuario);
+            _context.SaveChanges();
             Console.WriteLine("Usuario actualizado correctamente.");
         }
         catch (Exception ex)
@@ -159,7 +187,7 @@ class Program
         }
     }
 
-    static void EliminarUsuario(EmpresadbContext context)
+    public void EliminarUsuario()
     {
         Console.Clear();
         Console.WriteLine("=== ELIMINAR USUARIO ===");
@@ -171,7 +199,7 @@ class Program
             return;
         }
 
-        var usuario = context.Usuarios.Find(id);
+        var usuario = _context.Usuarios.Find(id);
         if (usuario == null)
         {
             Console.WriteLine("Usuario no encontrado.");
@@ -188,13 +216,136 @@ class Program
 
         try
         {
-            context.Usuarios.Remove(usuario);
-            context.SaveChanges();
+            _context.Usuarios.Remove(usuario);
+            _context.SaveChanges();
             Console.WriteLine("Usuario eliminado correctamente.");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error al eliminar usuario: {ex.Message}");
+        }
+    }
+}
+
+public class OrderController
+{
+    private readonly EmpresadbContext _context;
+
+    public OrderController(EmpresadbContext context)
+    {
+        _context = context;
+    }
+
+    public void ListarPedidos()
+    {
+        Console.Clear();
+        Console.WriteLine("=== LISTA DE PEDIDOS ===");
+        foreach (var pedido in _context.Pedidos.Include(p => p.Cliente).ToList())
+        {
+            Console.WriteLine($"Pedido ID: {pedido.Id}, Cliente: {pedido.Cliente}, Estado: {pedido.Estado}");
+        }
+    }
+
+    public void AgregarPedido()
+    {
+        Console.Clear();
+        Console.WriteLine("=== AGREGAR NUEVO PEDIDO ===");
+
+        Console.Write("Ingrese el ID del cliente: ");
+        if (!int.TryParse(Console.ReadLine(), out int clienteId))
+        {
+            Console.WriteLine("ID no válido.");
+            return;
+        }
+
+        var cliente = _context.Clientes.Find(clienteId);
+        if (cliente == null)
+        {
+            Console.WriteLine("Cliente no encontrado.");
+            return;
+        }
+
+        Pedido nuevoPedido = new Pedido
+        {
+            ClienteId = clienteId,
+            Fecha = DateTime.Now,
+            Estado = "pendiente"
+        };
+
+        try
+        {
+            _context.Pedidos.Add(nuevoPedido);
+            _context.SaveChanges();
+            Console.WriteLine("Pedido agregado correctamente.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el pedido: {ex.Message}");
+        }
+    }
+}
+
+public class ProductController
+{
+    private readonly EmpresadbContext _context;
+
+    public ProductController(EmpresadbContext context)
+    {
+        _context = context;
+    }
+
+    public void ListarProductos()
+    {
+        Console.Clear();
+        Console.WriteLine("=== LISTA DE PRODUCTOS ===");
+        foreach (var producto in _context.Productos.ToList())
+        {
+            Console.WriteLine($"{producto.Id} - {producto.Nombre} - {producto.Precio} - {producto.Stock}");
+        }
+    }
+
+    public void AgregarProducto()
+    {
+        Console.Clear();
+        Console.WriteLine("=== AGREGAR NUEVO PRODUCTO ===");
+
+        Console.Write("Nombre: ");
+        string nombre = Console.ReadLine();
+
+        Console.Write("Descripción: ");
+        string descripcion = Console.ReadLine();
+
+        Console.Write("Precio: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal precio))
+        {
+            Console.WriteLine("Precio no válido.");
+            return;
+        }
+
+        Console.Write("Stock: ");
+        if (!int.TryParse(Console.ReadLine(), out int stock))
+        {
+            Console.WriteLine("Stock no válido.");
+            return;
+        }
+
+        Producto nuevoProducto = new Producto
+        {
+            Nombre = nombre,
+            Descripcion = descripcion,
+            Precio = precio,
+            Stock = stock
+        };
+
+        try
+        {
+            _context.Productos.Add(nuevoProducto);
+            _context.SaveChanges();
+            Console.WriteLine("Producto agregado correctamente.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el producto: {ex.Message}");
         }
     }
 }
