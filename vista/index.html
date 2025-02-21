@@ -3,31 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="styles.css" />
-    <title>Usuarios</title>
+    <title>Administración de Usuarios</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Administración de Usuarios</h1>
 
-    <h1>Lista de Usuarios</h1>
-    <button onclick="getUsers()">Cargar Usuarios</button>
+        <!-- Lista de Usuarios -->
+        <div class="mb-5">
+            <h2>Lista de Usuarios</h2>
+            <ul id="userList" class="list-group"></ul>
+        </div>
 
-    <ul id="userList"></ul>
+        <!-- Formulario para Agregar Usuario -->
+        <div class="mb-5">
+            <h2>Agregar Usuario</h2>
+            <form id="addUserForm">
+                <div class="mb-3">
+                    <label for="nombreAdd" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombreAdd" name="nombre" required>
+                </div>
+                <div class="mb-3">
+                    <label for="emailAdd" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="emailAdd" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="passwordAdd" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="passwordAdd" name="password">
+                </div>
+                <div class="mb-3">
+                    <label for="rolAdd" class="form-label">Rol</label>
+                    <input type="text" class="form-control" id="rolAdd" name="rol">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addUser()">Agregar Usuario</button>
+            </form>
+        </div>
 
-    <div class="input-group mb-3">
-        <input type="number" class="form-control" id="userIdInput" placeholder="Ingrese ID de usuario">
-        <div class="input-group-append">
-            <button class="btn btn-danger" type="button" onclick="deleteUser(document.getElementById('userIdInput').value)">Eliminar Usuario</button>
+        <!-- Formulario para Actualizar Usuario -->
+        <div class="mb-5">
+            <h2>Actualizar Usuario</h2>
+            <form id="updateUserForm">
+                <div class="mb-3">
+                    <label for="userIdUpdate" class="form-label">ID del Usuario</label>
+                    <input type="number" class="form-control" id="userIdUpdate" name="userId" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nombreUpdate" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombreUpdate" name="nombre" required>
+                </div>
+                <div class="mb-3">
+                    <label for="emailUpdate" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="emailUpdate" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="passwordUpdate" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="passwordUpdate" name="password">
+                </div>
+                <div class="mb-3">
+                    <label for="rolUpdate" class="form-label">Rol</label>
+                    <input type="text" class="form-control" id="rolUpdate" name="rol">
+                </div>
+                <button type="button" class="btn btn-success" onclick="updateUser()">Actualizar Usuario</button>
+            </form>
+        </div>
+
+        <!-- Formulario para Eliminar Usuario -->
+        <div>
+            <h2>Eliminar Usuario</h2>
+            <form id="deleteForm">
+                <div class="mb-3">
+                    <label for="userIdDelete" class="form-label">ID del Usuario</label>
+                    <input type="number" class="form-control" id="userIdDelete" name="userId" required>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="deleteUser()">Eliminar Usuario</button>
+            </form>
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
-
-    <div class="actualizarUsuario">
-
-    </div>
 </body>
 </html>
