@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MiPrimerORM1.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using MiPrimerORM1.Controllers;
+using MiPrimerORM1.Models;
 using System.Threading.Tasks;
 
 namespace api.Controllers
@@ -20,7 +20,19 @@ namespace api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetAllUsers()
         {
-            return await _context.Usuarios.ToListAsync();
+            var users = await _context.Usuarios.ToListAsync();
+            return Ok(users);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Usuario>> GetUser(int id)
+        {
+            var user = await _context.Usuarios.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
 
         [HttpPost]
@@ -28,24 +40,9 @@ namespace api.Controllers
         {
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
-            return CreatedAtRoute("GetUser", new { id = usuario.Id }, usuario);
+            return CreatedAtAction(nameof(GetUser), new { id = usuario.Id }, usuario);
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUser(int id)
-        {
-            var user = await _context.Usuarios.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
-
-        // PUT: api/User/5
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, Usuario usuario)
         {
@@ -55,27 +52,10 @@ namespace api.Controllers
             }
 
             _context.Entry(usuario).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Usuarios.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        // DELETE: api/User/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -87,7 +67,6 @@ namespace api.Controllers
 
             _context.Usuarios.Remove(user);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
     }

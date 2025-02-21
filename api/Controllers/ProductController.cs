@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MiPrimerORM1.Models;
 using Microsoft.EntityFrameworkCore;
+using MiPrimerORM1.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,34 +21,31 @@ namespace api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> GetAllProducts()
         {
-            return await _context.Productos.ToListAsync();
+            var productos = await _context.Productos.ToListAsync();
+            return Ok(productos);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Producto>> AddProduct(Producto producto)
-        {
-            _context.Productos.Add(producto);
-            await _context.SaveChangesAsync();
-            return CreatedAtRoute("GetProduct", new { id = producto.Id }, producto);
-        }
-
-        // GET: api/Product/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProduct(int id)
         {
             var producto = await _context.Productos.FindAsync(id);
-
             if (producto == null)
             {
                 return NotFound();
             }
-
-            return producto;
+            return Ok(producto);
         }
 
-        // PUT: api/Product/5
+        [HttpPost]
+        public async Task<ActionResult<Producto>> AddProduct([FromBody] Producto producto)
+        {
+            _context.Productos.Add(producto);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetProduct), new { id = producto.Id }, producto);
+        }
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, Producto producto)
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Producto producto)
         {
             if (id != producto.Id)
             {
@@ -55,27 +53,10 @@ namespace api.Controllers
             }
 
             _context.Entry(producto).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Productos.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        // DELETE: api/Product/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -87,7 +68,6 @@ namespace api.Controllers
 
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
     }
