@@ -45,4 +45,3 @@ Leer: Ver la lista de usuarios.
 Actualizar: Modificar los datos de un usuario existente.
 Eliminar: Eliminar un usuario existente.
 
-Este `README.md` proporciona una visión general clara del proyecto, cómo configurarlo y ejecutarlo, y cómo contribuir. Espero que sea útil para tu proyecto en GitHub.
