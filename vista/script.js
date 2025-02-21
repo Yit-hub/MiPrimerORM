@@ -80,7 +80,7 @@ async function getUsers() {
     }
 }
 // 🔹 Pruebas en consola:
-getUsers(); // Obtener todos los usuarios
+//getUsers(); // Obtener todos los usuarios
 // getUserById(1); // Obtener usuario con ID 1
 // addUser({ nombre: "Juan", email: "juan@example.com" }); // Agregar usuario
 // updateUser(1, { nombre: "Juan Pérez", email: "juanperez@example.com" }); // Actualizar usuario con ID 1
