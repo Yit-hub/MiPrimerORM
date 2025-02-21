@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MiApi.Controllers
+namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
